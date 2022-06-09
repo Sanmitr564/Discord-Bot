@@ -67,9 +67,9 @@ def input_at_time(input):
     if len(args) > 3:
         return None
     elif len(args) == 3:
-        time = string_to_time(args[0])
+        hour, minute = string_to_time(args[0])
         ampm = string_to_ampm(args[1])
-        date = args[2]
+        month, day, year = string_to_time(args[2])
 
 # !pingme at time, message
 # !pingme every time, message
