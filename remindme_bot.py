@@ -23,6 +23,35 @@ reminders = []
 #
 # full arguments list () is optional: hour(:minute) (am/pm) (month/day/(year))
 
+def string_to_date(date):
+    datestring = None
+    if '/' in date:
+        datestring = date.split('/')
+    elif '-' in date:
+        datestring = date.split('-')
+    
+    
+        
+def string_to_time(time):
+    timestring = time.split(':')
+    h, m = 0
+    if len(timestring) == 1:
+        h = timestring[0]
+    elif len(timestring) == 2:
+        h = timestring[0]
+        m = timestring[1]
+    else:
+        return None
+    return h, m
+
+def string_to_ampm(ampm):
+    if ampm.lower == 'am':
+        return 'am'
+    elif ampm.lower == 'pm':
+        return 'pm'
+    else:
+        return None
+
 def input_at_time(input):
     args = input.split()
     year, month, day, hour, minute = None
@@ -30,29 +59,9 @@ def input_at_time(input):
     if len(args) > 3:
         return None
     elif len(args) == 3:
-        time = args[0]
-        ampm = args[1]
+        time = string_to_time(args[0])
+        ampm = string_to_ampm(args[1])
         date = args[2]
-        
-        timestring = time.split(':')
-        h, m = 0
-        if len(timestring) == 1:
-            h = timestring[0]
-        elif len(timestring) == 2:
-            h = timestring[0]
-            m = timestring[1]
-        else:
-            return None
-
-        if ampm.lower == 'am':
-            pass
-        elif ampm.lower == 'pm':
-            pass
-        else:
-            return None
-        
-        
-
 
 # !pingme at time, message
 # !pingme every time, message
