@@ -33,9 +33,9 @@ def string_to_date(date):
     if len(datestring) != 3:
         return None
     else:
-        m = datestring[0]
-        d = datestring[1]
-        y = datestring[3] + 2000
+        m = int(datestring[0])
+        d = int(datestring[1])
+        y = int(datestring[3]) if int(datestring[3]) > 99 else int(datestring[3]) + 2000
         return m, d, y
     
     
