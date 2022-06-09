@@ -1,24 +1,12 @@
 from datetime import datetime
 from datetime import timedelta
 
-class Timer():
+class Notification():
+    def __init__(self, time: datetime, message: str, repeating: bool, recipients: list):
+        self.time: datetime = time
+        self.message: str = message
+        self.repeating: bool = repeating
 
-    def __init__(self, offset=None):
-        #offset:
-        #   weeks
-        #   days
-        #   hours
-        #   minutes
-        now = datetime.now()
-        #time_change = timedelta(weeks=weeks, days=days, hours=hours, minutes=minutes)
-        #self.reminder_time = now + time_change
+    def __fire():
+        pass
 
-    def get_reminder_time(self):
-        return self.reminder_time
-
-class Alarm():
-
-    def __init__(self, date=None):
-        #date:
-        #
-        pass   
