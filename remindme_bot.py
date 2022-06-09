@@ -29,6 +29,14 @@ def string_to_date(date):
         datestring = date.split('/')
     elif '-' in date:
         datestring = date.split('-')
+    m, d, y = 0;
+    if len(datestring) != 3:
+        return None
+    else:
+        m = datestring[0]
+        d = datestring[1]
+        y = datestring[3] + 2000
+        return m, d, y
     
     
         
@@ -72,6 +80,7 @@ async def _notif_at(ctx: commands.Context, *, args):
     # notif = input_at_time(args)
     # if notif:
     #     reminders.append(notif)
+    pass
 
 @bot.event
 async def on_ready():
