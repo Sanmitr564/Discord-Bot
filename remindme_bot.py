@@ -72,12 +72,8 @@ def input_at_time(input):
         hour, minute = string_to_time(args[0])
         ampm = string_to_ampm(args[1])
         month, day, year = string_to_date(args[2])
-        print("hour: ", hour)
-        print("minute: ", minute)
-        print("ampm: ", ampm)
-        print("month: ", month)
-        print("day: ", day)
-        print("year: ", year)
+        notif = datetime(year, month, day, hour=hour, minute=minute)
+        return notif
         
 
 # !pingme at time, message
@@ -86,10 +82,9 @@ def input_at_time(input):
 
 @bot.command(aliases = ['at'])
 async def _notif_at(ctx: commands.Context, *, args):
-    # notif = input_at_time(args)
-    # if notif:
-    #     reminders.append(notif)
-    pass
+    notif = input_at_time(args)
+    if notif:
+        reminders.append(notif)
 
 @bot.event
 async def on_ready():
