@@ -52,7 +52,7 @@ def string_to_time(time):
         m = timestring[1]
     else:
         return None
-    return h, m
+    return int(h), int(m)
 
 def string_to_ampm(ampm):
     if ampm.lower == 'am':
