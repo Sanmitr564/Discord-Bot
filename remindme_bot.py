@@ -72,7 +72,7 @@ def input_at_time(input):
         hour, minute = string_to_time(args[0])
         ampm = string_to_ampm(args[1])
         month, day, year = string_to_date(args[2])
-        notif = datetime(year, month, day, hour=hour, minute=minute)
+        notif = datetime.datetime(year, month, day, hour=hour, minute=minute)
         return notif
         
 
