@@ -85,6 +85,7 @@ async def _notif_at(ctx: commands.Context, *, args):
     notif = input_at_time(args)
     if notif:
         reminders.append(notif)
+        await ctx.send(notif)
 
 @bot.event
 async def on_ready():
