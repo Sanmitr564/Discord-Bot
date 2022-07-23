@@ -4,6 +4,8 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 from os import getenv
+from multiprocessing import Process
+from time import sleep
 
 from reminder import Notification
 
@@ -74,8 +76,14 @@ def input_at_time(input):
         month, day, year = string_to_date(args[2])
         notif = datetime.datetime(year, month, day, hour=hour, minute=minute)
         return notif
-        
 
+def per_min():
+    while True:
+        sleep(1)
+        print('second elapsed')
+
+def start():
+    bot.run(TOKEN)
 # !pingme at time, message
 # !pingme every time, message
 # !pingme in time, message
@@ -91,4 +99,11 @@ async def _notif_at(ctx: commands.Context, *, args):
 async def on_ready():
     print('Bot is online!')
 
-bot.run(TOKEN)
+if __name__ == '__main__':
+    p1 = Process(target=per_min)
+    p2 = Process(target=start)
+
+    p1.start()
+    p2.start()
+    p1.join()
+    p2.join()
