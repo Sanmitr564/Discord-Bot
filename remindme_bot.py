@@ -1,11 +1,11 @@
 import datetime
+import sched
+from time import sleep, time
 from tokenize import Token
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from os import getenv
-from multiprocessing import Process
-from time import sleep
 
 from reminder import Notification
 
@@ -77,16 +77,24 @@ def input_at_time(input):
         notif = datetime.datetime(year, month, day, hour=hour, minute=minute)
         return notif
 
-def per_min():
-    while True:
-        sleep(1)
-        print('second elapsed')
-
-def start():
-    bot.run(TOKEN)
 # !pingme at time, message
 # !pingme every time, message
 # !pingme in time, message
+
+def initialize_time():
+    now = datetime.datetime.now()
+    begin = datetime.datetime(year=now.year, month=now.month, day=now.day, hour=now.hour, minute= now.minute + 1)
+    delta = begin-now
+    s = sched.scheduler(time, sleep)
+    s.enter(delta.total_seconds(), 0, begin_time)
+    s.run()
+
+def begin_time():
+    check_reminders.start()
+
+@tasks.loop(minutes=1)
+async def check_reminders():
+    pass
 
 @bot.command(aliases = ['at'])
 async def _notif_at(ctx: commands.Context, *, args):
@@ -98,12 +106,7 @@ async def _notif_at(ctx: commands.Context, *, args):
 @bot.event
 async def on_ready():
     print('Bot is online!')
+    initialize_time()
+    
 
-if __name__ == '__main__':
-    p1 = Process(target=per_min)
-    p2 = Process(target=start)
-
-    p1.start()
-    p2.start()
-    p1.join()
-    p2.join()
+bot.run(TOKEN)
