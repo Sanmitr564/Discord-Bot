@@ -1,6 +1,6 @@
 import datetime
 import sched
-from time import sleep, time
+from asyncio import sleep
 from tokenize import Token
 import discord
 from discord.ext import commands, tasks
@@ -57,14 +57,14 @@ def string_to_time(time):
     return int(h), int(m)
 
 def string_to_ampm(ampm):
-    if ampm.lower == 'am':
+    if ampm.lower() == 'am':
         return 'am'
-    elif ampm.lower == 'pm':
+    elif ampm.lower() == 'pm':
         return 'pm'
     else:
         return None
 
-def input_at_time(input):
+def input_at_time(input, ctx: commands.Context):
     args = input.split()
     year = month = day = hour = minute = None
 
@@ -74,39 +74,68 @@ def input_at_time(input):
         hour, minute = string_to_time(args[0])
         ampm = string_to_ampm(args[1])
         month, day, year = string_to_date(args[2])
-        notif = datetime.datetime(year, month, day, hour=hour, minute=minute)
+        if ampm == 'pm':
+            hour += 12
+        if not (hour < 24 and minute < 60):
+            print('1')
+            return None
+        if hour is None or minute is None or ampm is None or month is None or day is None or year is None:
+            return None
+        notif = Notification(
+            ctx= ctx,
+            time=datetime.datetime(year, month, day, hour=hour, minute=minute),
+        )
         return notif
 
 # !pingme at time, message
 # !pingme every time, message
 # !pingme in time, message
 
-def initialize_time():
+async def initialize_time():
     now = datetime.datetime.now()
     begin = datetime.datetime(year=now.year, month=now.month, day=now.day, hour=now.hour, minute= now.minute + 1)
     delta = begin-now
-    s = sched.scheduler(time, sleep)
-    s.enter(delta.total_seconds(), 0, begin_time)
-    s.run()
+    await sleep(delta.total_seconds())
+    begin_time()
 
 def begin_time():
+    print('begin')
     check_reminders.start()
 
 @tasks.loop(minutes=1)
 async def check_reminders():
-    pass
+    now = datetime.datetime.now().replace(second= 0, microsecond=0)
+    for notif in reminders:
+        time: datetime.datetime = notif.time
+        if time == now:
+            reminders.remove(notif)
+            await notif.send()
+        else:
+            break
+        
+        
 
 @bot.command(aliases = ['at'])
 async def _notif_at(ctx: commands.Context, *, args):
-    notif = input_at_time(args)
+    notif = input_at_time(args, ctx)
     if notif:
         reminders.append(notif)
-        await ctx.send(notif)
+        await ctx.message.add_reaction('✅')
+
+@bot.command()
+async def list(ctx: commands.Context):
+    if reminders:
+        await reminders[0].send()
+    else:
+        print('empty')
+
+@bot.command()
+async def repeat(ctx: commands.Context, args):
+    await ctx.send(args)
 
 @bot.event
 async def on_ready():
     print('Bot is online!')
-    initialize_time()
+    await initialize_time()
     
-
 bot.run(TOKEN)
