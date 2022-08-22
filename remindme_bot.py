@@ -33,7 +33,7 @@ def string_to_date(date):
         datestring = date.split('/')
     elif '-' in date:
         datestring = date.split('-')
-    m = d = y = 0;
+    m = d = y = 0
     if len(datestring) != 3:
         return None
     else:
@@ -65,8 +65,26 @@ def string_to_ampm(ampm):
         return None
 
 def input_at_time(input, ctx: commands.Context):
+
+    message = ""
+
+    if '"' in input:
+        if input.find('"') != input.rfind('"'):
+            hasMessage = True
+            message = input[input.find('"') : input.rfind('"') + 1]
+            input = input[input.find('"') - 1 : input.rfind('"') + 1]
+    elif "'" in input:
+        if input.find("'") != input.rfind("'"):
+            hasMessage = True
+            message = input[input.find("'"):input.rfind("'")+1]
+            input = input[input.find("'") - 1 : input.rfind("'") + 1]
+        
     args = input.split()
+    
+
     year = month = day = hour = minute = None
+
+    
 
     if len(args) > 3:
         return None
@@ -84,6 +102,7 @@ def input_at_time(input, ctx: commands.Context):
         notif = Notification(
             ctx= ctx,
             time=datetime.datetime(year, month, day, hour=hour, minute=minute),
+            text=message
         )
         return notif
 
@@ -99,7 +118,7 @@ async def initialize_time():
     begin_time()
 
 def begin_time():
-    print('Minutes began at ' + str(datetime.datetime.now()))
+    print('begin')
     check_reminders.start()
 
 @tasks.loop(minutes=1)
@@ -112,6 +131,8 @@ async def check_reminders():
             await notif.send()
         else:
             break
+        
+        
 
 @bot.command(aliases = ['at'])
 async def _notif_at(ctx: commands.Context, *, args):
@@ -136,14 +157,4 @@ async def on_ready():
     print('Bot is online!')
     await initialize_time()
     
-@bot.event
-async def on_reaction_add(reaction: discord.Reaction, user: discord.User):
-    if user.id == bot.user.id:
-        return
-    if reaction.emoji == '✅':
-        for notif in reminders:
-            if reaction.message == notif.ctx.message:
-                notif.add_recipient(user)
-                break
-
 bot.run(TOKEN)
