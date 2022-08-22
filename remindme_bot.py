@@ -70,11 +70,11 @@ def input_at_time(input, ctx: commands.Context):
 
     if '"' in input:
         if input.find('"') != input.rfind('"'):
-            message = input[input.find('"') : input.rfind('"')]
+            message = input[input.find('"') + 1 : input.rfind('"')]
             input = input[input.find('"') - 1 : input.rfind('"') + 1]
     elif "'" in input:
         if input.find("'") != input.rfind("'"):
-            message = input[input.find("'"):input.rfind("'")]
+            message = input[input.find("'") + 1 :input.rfind("'")]
             input = input[input.find("'") - 1 : input.rfind("'") + 1]
         
     args = input.split()
