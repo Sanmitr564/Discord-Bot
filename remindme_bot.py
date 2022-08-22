@@ -99,7 +99,7 @@ async def initialize_time():
     begin_time()
 
 def begin_time():
-    print('begin')
+    print('Minutes began at ' + str(datetime.datetime.now()))
     check_reminders.start()
 
 @tasks.loop(minutes=1)
@@ -112,8 +112,6 @@ async def check_reminders():
             await notif.send()
         else:
             break
-        
-        
 
 @bot.command(aliases = ['at'])
 async def _notif_at(ctx: commands.Context, *, args):
@@ -138,4 +136,14 @@ async def on_ready():
     print('Bot is online!')
     await initialize_time()
     
+@bot.event
+async def on_reaction_add(reaction: discord.Reaction, user: discord.User):
+    if user.id == bot.user.id:
+        return
+    if reaction.emoji == '✅':
+        for notif in reminders:
+            if reaction.message == notif.ctx.message:
+                notif.add_recipient(user)
+                break
+
 bot.run(TOKEN)

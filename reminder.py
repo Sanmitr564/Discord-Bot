@@ -17,4 +17,7 @@ class Notification():
             message += f"<@{r.id}> "
         message += self.text
         await self.ctx.send(message)
-    
+
+    def add_recipient(self, recipient: discord.User):
+        if not recipient in self.recipients:
+            self.recipients.append(recipient)
